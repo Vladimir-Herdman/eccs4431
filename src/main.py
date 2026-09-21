@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """OF NOTE:
 Essentially, this program defines nodes that act as 'states,' which
 contain a dict of string values and output states acting as the
@@ -41,7 +42,7 @@ class State:
                      f"{", the acceptance state" if self.name == "bread" else ", not the acceptance state 'bread'"}.\n"
             return
         if input[0] not in self.transitions:
-            result = f"{failure_str}: Transition {input[0]} for state {self.name} not found."
+            result = f"{failure_str}: Transition on input '{input[0]}' for state '{self.name}' not found."
             return
         next_node = self.transitions[input[0]]
         input = input[1:]
@@ -99,10 +100,10 @@ def main() -> int:
 
     if (passedargs[0] == "testcases"):
         handle_input(["feed", "mix", "mix", "cold-proof", "bake"])
-        handle_input(["feed", "mix", "mix", "cold-proof", "bake"])
-        handle_input(["feed", "mix", "mix", "mold", "mix", "mold", "bake", "rise", "falls"])
-        handle_input(["feed", "falls", "feed", "falls", "feed", "mix", "mix", "rise", "rise", "cold-proof", "sticky", "cold-proof", "bake"])
-        handle_input(["feed", "mix", "mix", "cold-proof"])
+        handle_input(["feed", "falls", "feed", "falls", "feed", "mix", "mix", "rise", "rise", "sticky", "mix", "cold-proof", "sticky", "cold-proof", "bake"])
+        handle_input(["rise", "mix", "mix", "rise", "rise", "rise", "rise", "rise", "rise", "rise", "rise", "rise", "rise", "rise", "rise", "cold-proof", "bake"])
+        handle_input(["feed", "mix", "mix", "sticky", "bake"])
+        handle_input(["rise", "mix", "mix", "sticky", "mix", "rise", "mold", "rise", "rise", "falls"])
     else:
         handle_input(passedargs)
 
