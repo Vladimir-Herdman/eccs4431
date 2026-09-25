@@ -38,4 +38,4 @@ whether the input has been accepted or denied.
 
 # Video Guide
 Here's a link to a video presenting this specific state diagram and project:
-- asdf
+- https://youtu.be/SlZw3Np2W9E?si=pL8Fys2h8uvY5uAx
