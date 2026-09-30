@@ -35,10 +35,14 @@ def lexically_analyze(file):
         token_list: list[tuple] = list()
 
         for line in f:
+            tokens_found = set()
             for token_type, pattern in patterns:
                 tokens = re.findall(pattern, line)
                 for token in tokens:
+                    if token in tokens_found:
+                        continue
                     token_list.append((token_type, token))
+                    tokens_found.add(token)
 
                 #comment_pattern should be first each time
                 if pattern is comment_pattern:
