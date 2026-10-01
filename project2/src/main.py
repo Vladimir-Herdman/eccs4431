@@ -29,6 +29,10 @@ def is_float(v: str) -> bool:
     return False
 
 
+def perror(nline, estr):
+    print(f"{error_str}: Line {nline}. {estr}")
+
+
 keyword_pattern =    r"\b(IF|ELSE|WHILE|PRINT|INTEGER|FLOAT|GET)\b"
 operator_pattern =   r"[+\-\*]|[<>=!]?[=](?!=)|[<>]|(?:&&)|(?:\|\|)|[!]"
 identifier_pattern = r"[a-zA-Z][a-zA-Z_0-9]*"
@@ -61,7 +65,8 @@ def lexically_analyze(file):
                     token_list.append((token_type, token))
                     tokens_found.add(token)
 
-                #comment_pattern should be first each time
+                #comment_pattern should be first each time so we
+                #don't read comments for tokens.
                 if token_type == "Comment":
                     line = line.split("//")[0]
 
@@ -75,27 +80,20 @@ def lexically_analyze(file):
                 if token_type == "Identifier":
                     assignments = re.findall(fr"\b(FLOAT|INTEGER) ({identifier_pattern})[ ]*=[ ]*(.*?);", line)
                     if len(assignments) > 1:
-                        print(f"{error_str}: Multiple assignments on line {nline}: '{line}'")
+                        perror(nline, f"Multiple assignments: '{line}")
                     elif len(assignments) == 1:
                         vartype, varname, varval = assignments[0]
                         if varname in variables:
-                            print("{error_str}: Variable name already in use, can't redeclare.")
+                            perror(nline, f"Variable name '{varname}' already in use, can't redeclare: '{line}")
                         else:
                             variables.add(varname)
 
                         if vartype == "INTEGER" and is_float(varval):
-                            print(f"{error_str}: Can't assign float to integer type variable. line {nline}: '{line}'")
+                            perror(nline, f"Can't assign float to integer type variable: '{line}'")
                         if vartype == "FLOAT" and not is_float(varval):
-                            print(f"{error_str}: Improper assignment to FLOAT var '{varname}' on line {nline}: '{line}'")
-
-                    for token in tokens:
-                        if token in variables:
-                            continue
-                        if re.match(fr"{token}\[ =\]", line):
-                            pass
-                        else:
-                            pass
-
+                            perror(nline, f"Improper assignment to FLOAT var '{varname}' with val {varval}: '{line}'")
+                        if len(varval) == 0:
+                            perror(nline, f"Variable assignment with empty value: '{line}'")
 
             token_list.append(("newline", ""))
 

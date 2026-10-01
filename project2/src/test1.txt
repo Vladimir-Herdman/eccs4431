@@ -9,3 +9,6 @@ apple || banana && test >= test >- !banana <= == =
 IF BaELSE WHILE
 INTEGER apple = 123.12;
 FLOAT test = "string";
+FLOAT test = 123.5;
+FLOAT apb =;
+INTEGER test = 123;
