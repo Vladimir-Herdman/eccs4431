@@ -8,7 +8,10 @@ from sys import argv
 
 
 error_str = "\033[38;2;255;80;80mERROR\033[0m"
+warning_str = "\033[38;2;207;222;62mWARNING\033[0m"
 token_str = "\033[38;2;35;133;250mToken\033[0m"
+
+nwarnings = nerrors = 0
 
 
 def usage():
@@ -30,7 +33,14 @@ def is_float(v: str) -> bool:
 
 
 def perror(nline, estr):
+    global nerrors
+    nerrors += 1
     print(f"{error_str}: Line {nline}. {estr}")
+
+def pwarning(nline, istr):
+    global nwarnings
+    nwarnings += 1
+    print(f"{warning_str}: Line {nline}. {istr}")
 
 
 keyword_pattern =    r"\b(IF|ELSE|WHILE|PRINT|INTEGER|FLOAT|GET)\b"
@@ -69,6 +79,12 @@ def lexically_analyze(file):
                 #don't read comments for tokens.
                 if token_type == "Comment":
                     line = line.split("//")[0]
+
+                if token_type == "Number":
+                    badfloat = re.findall(r"[0-9]+\.[^0-9]", line)
+                    if len(badfloat) > 0:
+                        pwarning(nline, f"Detected number has needless '.' with no mantissa: '{line}'")
+                    
 
                 #Here, we're gonna check if the variable already
                 #exists and has been assigned. If you reference a
@@ -110,7 +126,12 @@ def lexically_analyze(file):
             else:
                 type_count[ttype] = 1
 
-        print(type_count)
+        print("Total tokens:", sum([c[1] for c in type_count.items() if c[0] != "Comment"]))
+        type_str = ""
+        for tokname, tokcount in type_count.items():
+            type_str += f"{tokname}:{tokcount}, "
+        type_str += f"Errors:{nerrors}, Warnings:{nwarnings}"
+        print("Individual tokens:", type_str)
 
 
 def main() -> None:
