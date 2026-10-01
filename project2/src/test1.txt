@@ -2,8 +2,10 @@
 apple; //}();
 123.44
 44. //should be an issue, remove after searching
-123 * 14 = 123 == bool
+123 * 14. = 123 == bool
 =, !=, <, >, <=, >=
 apple >= !banana
 apple || banana && test >= test >- !banana <= == =
 IF BaELSE WHILE
+INTEGER apple = 123.12;
+FLOAT test = "string";
