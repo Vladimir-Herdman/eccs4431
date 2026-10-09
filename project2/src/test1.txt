@@ -1,4 +1,5 @@
 ()//{}();
+FLOAT apple = ;
 apple; //}();
 123.44
 44. //should be an issue, remove after searching

@@ -11,6 +11,9 @@ error_str = "\033[38;2;255;80;80mERROR\033[0m"
 warning_str = "\033[38;2;207;222;62mWARNING\033[0m"
 token_str = "\033[38;2;35;133;250mToken\033[0m"
 
+warnings_list = list()
+errors_list = list()
+
 nwarnings = nerrors = 0
 
 
@@ -32,15 +35,15 @@ def is_float(v: str) -> bool:
     return False
 
 
-def perror(nline, estr):
-    global nerrors
+def log_error(etype, nline, estr):
+    global nerrors, errors_list
     nerrors += 1
-    print(f"{error_str}: Line {nline}. {estr}")
+    errors_list.append(f"{error_str}: {etype}. Line {nline}. {estr}")
 
-def pwarning(nline, istr):
-    global nwarnings
+def log_warning(wtype, nline, wstr):
+    global nwarnings, warnings_list
     nwarnings += 1
-    print(f"{warning_str}: Line {nline}. {istr}")
+    warnings_list.append(f"{warning_str}: {wtype}. Line {nline}. {wstr}")
 
 
 keyword_pattern =    r"\b(IF|ELSE|WHILE|PRINT|INTEGER|FLOAT|GET)\b"
@@ -83,8 +86,7 @@ def lexically_analyze(file):
                 if token_type == "Number":
                     badfloat = re.findall(r"[0-9]+\.[^0-9]", line)
                     if len(badfloat) > 0:
-                        pwarning(nline, f"Detected number has needless '.' with no mantissa: '{line}'")
-                    
+                        log_warning("IMPROPER FLOAT", nline, f"Detected number has needless '.' with no mantissa: '{line}'")
 
                 #Here, we're gonna check if the variable already
                 #exists and has been assigned. If you reference a
@@ -96,22 +98,34 @@ def lexically_analyze(file):
                 if token_type == "Identifier":
                     assignments = re.findall(fr"\b(FLOAT|INTEGER) ({identifier_pattern})[ ]*=[ ]*(.*?);", line)
                     if len(assignments) > 1:
-                        perror(nline, f"Multiple assignments: '{line}")
+                        log_error("MULTIPLE ASSIGNMENTS", nline, f"More than one on one line: '{line}")
                     elif len(assignments) == 1:
                         vartype, varname, varval = assignments[0]
-                        if varname in variables:
-                            perror(nline, f"Variable name '{varname}' already in use, can't redeclare: '{line}")
-                        else:
-                            variables.add(varname)
 
                         if vartype == "INTEGER" and is_float(varval):
-                            perror(nline, f"Can't assign float to integer type variable: '{line}'")
+                            continue
+                            log_error("IMPROPER TYPE ASSIGNMENT", nline, f"INTEGER var '{varname}' with FLOAT value {varval}: '{line}'")
                         if vartype == "FLOAT" and not is_float(varval):
-                            perror(nline, f"Improper assignment to FLOAT var '{varname}' with val {varval}: '{line}'")
+                            log_error("IMPROPER TYPE ASSIGNMENT", nline, f"FLOAT var '{varname}' with wrong value {varval}: '{line}'")
+                            continue
                         if len(varval) == 0:
-                            perror(nline, f"Variable assignment with empty value: '{line}'")
+                            log_error("EMPTY ASSIGNMENT", nline, f"Variable '{varname}' is assigned empty: '{line}'")
+                            continue
+
+                        if varname in variables:
+                            log_error("VARIABLE REDEFINITION", nline, f"Variable '{varname}' already in use, can't redeclare: '{line}")
+                        else:
+                            variables.add(varname)
+                    
+                    #Now check if we have any identifier found that weren't declared.
+                    for token in tokens:
+                        if token not in variables and token in [t[1] for t in token_list if t[0] == "Identifier"]:
+                            log_error("UNDEFINED REFERENCE", nline, f"Variable '{token}' hasn't been defined: '{line}'")
 
             token_list.append(("newline", ""))
+
+        for log in [*errors_list, *warnings_list]:
+            print(log)
 
         type_count = dict()
         for ttype, tval in token_list:
@@ -119,19 +133,22 @@ def lexically_analyze(file):
                 print()
                 continue
 
-            print(f"{token_str}: {tval}, Type: {ttype}")
+            print(f"{token_str}: '{tval}', Type: '{ttype}'")
 
             if ttype in type_count:
                 type_count[ttype] += 1
             else:
                 type_count[ttype] = 1
 
-        print("Total tokens:", sum([c[1] for c in type_count.items() if c[0] != "Comment"]))
+        global nerrors, nwarnings
+        print("Total tokens (no comments):", sum([c[1] for c in type_count.items() if c[0] != "Comment"]))
         type_str = ""
         for tokname, tokcount in type_count.items():
             type_str += f"{tokname}:{tokcount}, "
-        type_str += f"Errors:{nerrors}, Warnings:{nwarnings}"
+        type_str += f"{error_str}:{nerrors}, {warning_str}:{nwarnings}"
         print("Individual tokens:", type_str)
+
+        nerrors = nwarnings = 0
 
 
 def main() -> None:
@@ -147,7 +164,10 @@ def main() -> None:
             return
 
     for file in files:
+        fheader = f"======FILE: {file}======"
+        print(fheader)
         lexically_analyze(file)
+        print("="*len(fheader), end="\n\n")
 
 
 if __name__ == "__main__":
