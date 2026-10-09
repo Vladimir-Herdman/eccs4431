@@ -58,12 +58,12 @@ number_pattern =     r"[0-9]+(?:\.[0-9]+)?" #?: makes a capturing group in () no
 symbol_pattern =     r"[(){};]"
 comment_pattern =    r"//.*" #Don't include in final token count.
 patterns = [
-    ("Comment", comment_pattern),
-    ("Keyword", keyword_pattern),
-    ("Operator", operator_pattern),
-    ("Identifier", identifier_pattern),
-    ("Number", number_pattern),
-    ("Symbol", symbol_pattern),
+    ("Comment", re.compile(comment_pattern)),
+    ("Keyword", re.compile(keyword_pattern)),
+    ("Operator", re.compile(operator_pattern)),
+    ("Identifier", re.compile(identifier_pattern)),
+    ("Number", re.compile(number_pattern)),
+    ("Symbol", re.compile(symbol_pattern)),
 ]
 def lexically_analyze(file):
     with open(file, "r") as f:
