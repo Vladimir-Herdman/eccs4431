@@ -45,6 +45,11 @@ def log_warning(wtype, nline, wstr):
     nwarnings += 1
     warnings_list.append(f"{warning_str}: {wtype}. Line {nline}. {wstr}")
 
+def clear_logs():
+    global nerrors, nwarnings, errors_list, warnings_list
+    nerrors = nwarnings = 0
+    errors_list.clear()
+    warnings_list.clear()
 
 keyword_pattern =    r"\b(IF|ELSE|WHILE|PRINT|INTEGER|FLOAT|GET)\b"
 operator_pattern =   r"[+\-\*]|[<>=!]?[=](?!=)|[<>]|(?:&&)|(?:\|\|)|[!]"
@@ -148,7 +153,7 @@ def lexically_analyze(file):
         type_str += f"{error_str}:{nerrors}, {warning_str}:{nwarnings}"
         print("Individual tokens:", type_str)
 
-        nerrors = nwarnings = 0
+        clear_logs()
 
 
 def main() -> None:
