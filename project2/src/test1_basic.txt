@@ -1,8 +1,8 @@
+// Test 1: Basic Test; INTEGER test = 0;
 INTEGER x = 0;
 FLOAT y = 0.0;
 GET x;
 GET y;
-GET z;
 IF (x == 10) {
     PRINT x;
     x = x + 1;

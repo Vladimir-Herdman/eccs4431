@@ -1,0 +1,40 @@
+// Test 3: Boundary Test
+
+// No whitespace between tokens
+INTEGER a=5;FLOAT b=2.5;WHILE(a<=10){a=a+1;}
+IF(a==b){PRINT a;}ELSE{PRINT b;}
+
+// Operators adjacent to operands
+x=y+z*2-1/w;
+r=-5;
+q=a-b;
+
+// Two-character operators vs. one-character operators
+a<=b; a<b; a>=b; a>b; a==b; a=b; a!=b; !a;
+
+// Keywords as prefixes/suffixes of identifiers are still identifiers
+IFx ELSEy WHILEloop PRINTER INTEGER1 FLOATING GETTER xIF
+
+// Lowercase and mixed-case keywords are identifiers (keywords are uppercase)
+if else while print integer float get If Print
+
+// Identifier edge cases
+A a Z9 x_ x__y a1b2c3 this_is_a_really_long_identifier_name_with_many_parts_1234567890
+
+// Number edge cases
+0 00 007 0.0 0.00 100.001 9999999999 1.0
+
+// Division vs. comment
+a / b;
+a /b;
+a/ b;
+a//b; this whole part after the slashes is a comment
+c = 4 / 2; // trailing comment
+
+// Empty comment and comment-only lines
+//
+// ;;;; (((( )))) {{{{ }}}} inside a comment, so none of these count
+
+;;
+(){}
+// The last line is a comment with no newline at the end

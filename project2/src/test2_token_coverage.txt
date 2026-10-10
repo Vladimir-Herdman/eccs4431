@@ -1,0 +1,27 @@
+// Test 2: Token Coverage Test
+
+// Keywords
+IF ELSE WHILE PRINT INTEGER FLOAT GET
+
+// Arithmetic operators
+a + b - c * d / e
+
+// Assignment operator
+total_sum = 0;
+
+// Relational operators
+a == b; a != b; a < b; a > b; a <= b; a >= b;
+
+// Boolean operators
+IF (a & b || !c) {
+    PRINT a;
+}
+
+// Identifiers (letters, digits, underscores)
+x y1 total_sum counter Value2 my_var_3 A
+
+// Numbers
+10 45.67 0 0.5 123456789 3.14159
+
+// Symbols
+( ) { } ;

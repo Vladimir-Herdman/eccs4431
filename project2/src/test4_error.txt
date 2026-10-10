@@ -1,0 +1,34 @@
+// Test 4: Error Test
+
+// Invalid characters
+INTEGER x = 5 @ 3;
+FLOAT y = 2.0 # 1.0;
+x = x $ 2;
+y = y % 3;
+x = x ^ 2;
+z = ~x;
+PRINT "hello";
+x = 'a';
+y = x ? 1 : 0;
+[x];
+x = 5, y = 6;
+x . y;
+
+// Illegal number formats
+FLOAT a = 5.;
+FLOAT b = .5;
+FLOAT c = 1.2.3;
+FLOAT d = 3..4;
+INTEGER e = 12abc;
+FLOAT f = 4.5.;
+
+// Identifiers starting with an underscore
+_hidden = 1;
+__x = 2;
+
+// Incomplete operators
+IF (x | y) { PRINT x; }
+
+// Valid code mixed in to confirm the lexer recovers after errors
+INTEGER good = 42;
+PRINT good;

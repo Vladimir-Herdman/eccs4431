@@ -6,7 +6,6 @@ import pathlib
 import re
 from sys import argv
 
-
 error_str = "\033[38;2;255;80;80mERROR\033[0m"
 warning_str = "\033[38;2;207;222;62mWARNING\033[0m"
 token_str = "\033[38;2;35;133;250mToken\033[0m"
@@ -108,8 +107,8 @@ def lexically_analyze(file):
                         vartype, varname, varval = assignments[0]
 
                         if vartype == "INTEGER" and is_float(varval):
-                            continue
                             log_error("IMPROPER TYPE ASSIGNMENT", nline, f"INTEGER var '{varname}' with FLOAT value {varval}: '{line}'")
+                            continue
                         if vartype == "FLOAT" and not is_float(varval):
                             log_error("IMPROPER TYPE ASSIGNMENT", nline, f"FLOAT var '{varname}' with wrong value {varval}: '{line}'")
                             continue
@@ -127,6 +126,10 @@ def lexically_analyze(file):
                         if token not in variables and token in [t[1] for t in token_list if t[0] == "Identifier"]:
                             log_error("UNDEFINED REFERENCE", nline, f"Variable '{token}' hasn't been defined: '{line}'")
 
+            if len(re.findall(r"[0-9]+[^ +\-\/*.=!<>&|]+[0-9]+", line)) != 0:
+                log_error("INVALID CHARACTERS", nline, f"unexpected characters between the numbers: '{line}'")
+            if len(line) != 0 and len(re.findall(r".*;", line)) == 0:
+                log_warning("UNTERMINATED LINE", nline, f"Line doesn't end with a semicolon: '{line}'")
             token_list.append(("newline", ""))
 
         for log in [*errors_list, *warnings_list]:

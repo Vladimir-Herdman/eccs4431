@@ -1,0 +1,68 @@
+// Test 5: Programmer's Choice / Stress Test
+INTEGER a = 0;
+INTEGER b = 1;
+FLOAT c = 1
+FLOAT x = 1.0;
+FLOAT a = 1.;
+
+123@12;
+
+// Operators together
+a===b;
+a<==b;
+a>==b;
+a!==b;
+a=!b;
+a=!=b;
+a!!b;
+a<>b;
+a=<b;
+a=>b;
+a&&b;
+a|||b;
+a||||b;
+a&|b;
+a+-b;
+a*/b;
+a--b;
+a++b;
+
+// Slashes and comments
+a///b;
+a/ //b
+a/**/b;
+/ / /
+//// four slashes, then text
+x = 1 //* not a block comment */ y = 2;
+
+// Numbers next to identifiers and operators
+1x 1_2 1.5x 1.5_ 2e5 0x1F 1,000 1.2.3.4 1..2 1.+2 1.-2 -1.5 +3
+
+// Keywords glued to symbols and numbers
+IF(x){}ELSE{}WHILE(1){PRINT 1;}
+INTEGER3 GET1 FLOAT_ PRINT_x IF_ELSE
+
+// Deep nesting and long chains
+IF (((((((((((a))))))))))) { { { { { { { { PRINT a; } } } } } } } }
+a=b=c=d=e=f=g=1;
+x = 1+2-3*4/5+6-7*8/9+10-11*12/13+14-15*16/17;
+IF (!!!!a & !b || !!c & d || e & !!!f) { PRINT a; }
+WHILE (a<b & b<c || c<d & d<e) { a = a + 1; }
+
+// Whitespace oddities (tabs, extra spaces, blank lines)
+	INTEGER	  z	=	  9	;
+
+
+
+FLOAT    w=   3.14   ;
+
+// Mixed valid and invalid in a single line
+INTEGER n = 5 @ 2.5.1 + _temp & x | y;
+
+// Unicode and odd characters
+x = 5 × 3;
+y = π;
+z = café;
+
+// Stray characters at the end, with no final newline or semicolon
+GET x
