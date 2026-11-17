@@ -29,6 +29,7 @@ parser.h
 #C
 bin/
 build/
+build/gen/
 *.slo
 *.lo
 *.o
