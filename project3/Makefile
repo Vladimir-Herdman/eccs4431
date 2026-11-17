@@ -4,9 +4,12 @@ TARGET_DIR := bin
 BUILD_DIR := build
 SRC_DIRS := src
 
-SRC := $(shell find $(SRC_DIRS) -name '*.c')
 LEXER := $(shell find $(SRC_DIRS) -name '*.l') 
+LEXERC := $(LEXER:.l=.c)
 PARSER := $(shell find $(SRC_DIRS) -name '*.y') 
+PARSERC := $(PARSER:.y=.c)
+
+SRC := $(shell find $(SRC_DIRS) -name '*.c') $(LEXERC) $(PARSERC)
 OBJS := $(SRC:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
@@ -28,16 +31,20 @@ ifndef VIM
 endif
 
 #Building
-$(TARGET_DIR)/$(TARGET_EXEC): $(OBJS) $(LEXER) $(PARSER)
+$(TARGET_DIR)/$(TARGET_EXEC): $(PARSERC) $(LEXERC) $(OBJS)
 	@mkdir -p $(dir $@)
 	@$(CC) $(OBJS) -o $(TARGET_DIR)/$(TARGET_EXEC) $(LDFLAGS) $(LDLIBS) && \
 		printf '\n  $(GREEN)Compiled binary$(NC): %s\n' $@
 
-$(PARSER): src/Parser.y src/Lexer.c
-	bison $(PARSER)
+$(PARSERC): $(PARSER) $(LEXERC)
+	@printf '  $(YELLOW)Generating Parser$(NC): bison %s\n' $(PARSER)
+	@bison $(PARSER)
+	@mv *.c *.h src
 
-$(LEXER): src/Lexer.l
+$(LEXERC): $(LEXER)
+	@printf '  $(YELLOW)Generating Lexer$(NC): flex %s\n' $(LEXER)
 	@flex $(LEXER)
+	@mv *.c *.h src
 
 $(BUILD_DIR)/%.c.o: %.c
 	@mkdir -p $(dir $@)
@@ -47,7 +54,7 @@ $(BUILD_DIR)/%.c.o: %.c
 #Commands
 .PHONY: clean run
 clean: 
-	@printf '  $(RED)rm -r$(NC) %s %s\n' $(BUILD_DIR)/ $(TARGET_DIR)/
+	@printf '  $(RED)rm -r$(NC) %s %s src/Parser.{c,h} src/Lexer.{c,h}\n' $(BUILD_DIR)/ $(TARGET_DIR)/
 	@rm -r build/ bin/ src/Parser.{c,h} src/Lexer.{c,h} 2>/dev/null || true
 
 run: $(TARGET_DIR)/$(TARGET_EXEC)
